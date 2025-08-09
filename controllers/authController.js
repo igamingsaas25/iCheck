@@ -27,15 +27,18 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  const { email, apiKey } = req.body;
+  const { email, password } = req.body;
   try {
-    const user = await User.findOne({ email, apiKey });
+    const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ message: 'Invalid email or API key.' });
+      return res.status(401).json({ message: 'Invalid email or password.' });
     }
-    // Generate JWT token
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid email or password.' });
+    }
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-    res.status(200).json({ token });
+    res.status(200).json({ token, apiKey: user.apiKey });
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ message: 'Server error' });
