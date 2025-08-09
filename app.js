@@ -4,6 +4,8 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const logRoutes = require('./routes/logRoutes');
 
+require('dotenv').config();
+
 dotenv.config();
 connectDB();
 
