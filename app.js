@@ -5,8 +5,7 @@ const authRoutes = require('./routes/authRoutes');
 const logRoutes = require('./routes/logRoutes');
 
 require('dotenv').config();
-
-dotenv.config();
+console.log("Mongo URI:", process.env.MONGO_URL);
 connectDB();
 
 const app = express();
