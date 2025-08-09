@@ -19,3 +19,13 @@ exports.pushLog = async (req, res) => {
     res.status(500).json({ message:'Server error' });
   }
 };
+
+exports.getMyLogs = async (req, res) => {
+  try {
+    const logs = await Log.find({ createdBy: req.userId }).sort({ timestamp: -1 });
+    res.status(200).json(logs);
+  } catch (err) {
+    console.error('Get logs error:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
