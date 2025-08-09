@@ -1,12 +1,21 @@
 const Log = require('../models/Log');
 
-exports.ingestLog = async (req, res) => {
+exports.pushLog = async (req, res) => {
   try {
-    const log = new Log({ ...req.body, createdBy: req.user._id });
+    const logData = {
+      playerId: req.body.playerId,
+      eventType: req.body.eventType,
+      amount: req.body.amount,
+      game: req.body.game,
+      timestamp: req.body.timestamp,
+      meta: req.body.meta,
+      createdBy: req.userId // Attach authenticated user's ID
+    };
+    const log = new Log(logData);
     await log.save();
-    res.status(201).json({ msg: 'Log saved' });
+    res.status(201).json({ message: 'Log saved successfully' });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error('Log push error:', err);
+    res.status(500).json({ message:'Server error' });
   }
 };
