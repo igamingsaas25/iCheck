@@ -1,22 +1,28 @@
 const Log = require('../models/Log');
 
+// Supports both single and bulk log ingestion
 exports.pushLog = async (req, res) => {
   try {
-    const logData = {
-      playerId: req.body.playerId,
-      eventType: req.body.eventType,
-      amount: req.body.amount,
-      game: req.body.game,
-      timestamp: req.body.timestamp,
-      meta: req.body.meta,
-      createdBy: req.userId // Attach authenticated user's ID
-    };
-    const log = new Log(logData);
-    await log.save();
-    res.status(201).json({ message: 'Log saved successfully' });
+    let logs = req.body;
+
+    // If a single log object is sent, wrap it in an array
+    if (!Array.isArray(logs)) {
+      logs = [logs];
+    }
+
+    // Attach createdBy to each log
+    logs = logs.map(log => ({
+      ...log,
+      createdBy: req.userId
+    }));
+
+    // Insert all logs at once
+    await Log.insertMany(logs);
+
+    res.status(201).json({ message: 'Logs saved successfully' });
   } catch (err) {
-    console.error('Log push error:', err);
-    res.status(500).json({ message:'Server error' });
+    console.error('Bulk log push error:', err);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
