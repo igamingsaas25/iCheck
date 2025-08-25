@@ -45,9 +45,9 @@ const LogSchema = new mongoose.Schema({
     validate: {
       validator: function(v) {
         // Check required meta fields
-        return v.provider && v.currency && v.gameRoundId && v.transactionId && v.status;
+        return v.provider;
       },
-      message: 'Meta fields provider, currency, gameRoundId, transactionId, and status are required.'
+      message: 'Meta fields provider is required'
     }
   },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
