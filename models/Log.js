@@ -29,17 +29,27 @@ const LogSchema = new mongoose.Schema({
   eventType: { type: String, required: true, enum: ['getaccount', 'getbalance', 'wager', 'result'] },
   playerId: { type: String, required: true },
   timestamp: { type: Date, required: true },
-  sessionId: String,
+  sessionId: { type: String, required: true },
   ip: String,
   device: String,
   location: LocationSchema,
   game: String,
-  currency: String,
-  amount: Number,
+  currency: { type: String, required: true },
+  amount: { type: Number, required: true },
   payout: Number,
-  balance: Number,
-  errorCode: String,
-  meta: MetaSchema,
+  balance: { type: Number, required: true },
+  errorCode: { type: String, required: true },
+  meta: {
+    type: MetaSchema,
+    required: true,
+    validate: {
+      validator: function(v) {
+        // Check required meta fields
+        return v.provider && v.currency && v.gameRoundId && v.transactionId && v.status;
+      },
+      message: 'Meta fields provider, currency, gameRoundId, transactionId, and status are required.'
+    }
+  },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 
