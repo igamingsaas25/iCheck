@@ -21,6 +21,9 @@ exports.pushLog = async (req, res) => {
 
     res.status(201).json({ message: 'Logs saved successfully' });
   } catch (err) {
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ message: err.message, errors: err.errors });
+    }
     console.error('Bulk log push error:', err);
     res.status(500).json({ message: 'Server error' });
   }
