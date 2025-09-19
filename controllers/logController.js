@@ -1,6 +1,5 @@
 const Log = require('../models/Log');
 const FraudDetection = require('../models/FraudDetection');
-const Log = require('../models/Log');
 
 async function checkFraud(log, userId) {
   const frauds = [];
